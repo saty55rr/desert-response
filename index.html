@@ -1,0 +1,40 @@
+if(bodycamActive){
+    const now = new Date();
+    const pad = n=>String(n).padStart(2,'0');
+    document.getElementById('bcStamp').textContent =
+      `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    // grain intensity depends on light
+    const grain = document.querySelector('#bodycam .grain');
+    grain.style.opacity = (0.04 + bodycamIntensity*0.06).toFixed(3);
+  }
+}
+
+// keyboard tracking for fallback
+window.addEventListener('keydown', e=>{ state._keys = state._keys || {}; state._keys[e.code] = true; });
+window.addEventListener('keyup', e=>{ if(state._keys) state._keys[e.code] = false; });
+
+// ---------- RENDER LOOP ----------
+function animate(){
+  requestAnimationFrame(animate);
+  const dt = Math.min(clock.getDelta(), 0.05);
+  update(dt);
+  if(renderer && scene && camera) renderer.render(scene, camera);
+}
+
+function onResize(){
+  if(!renderer) return;
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+// ---------- BOOT ----------
+init();
+animate();
+
+// Expose for debug
+window.__DR = { scene, player, state, doors, targets, interactables };
+
+</script>
+</body>
+</html>
